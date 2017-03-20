@@ -4,6 +4,7 @@ var Mailjet      = require ('node-mailjet')
     csv          = require('fast-csv'),
     path         = require('path'),
     fs           = require('fs'),
+    jsonfile     = require('jsonfile'),
     encodedImage = "",
     pathToLink   = "uploadImages",
     mailList     = [],
@@ -140,12 +141,15 @@ function executeSendingSMS(pathOfImage) {
  * @param {*} informations 
  */
 function launchMailRoutine(informations) {
+  jsonfile.writeFile("text.json", informations, function (err) {
+    if(err) throw err;
+  });
   readMailList(informations.text, informations.imageContent, prepareSMS);
 }
 
 /**
  * Get path to link for image
- * @param {function} callback method to execute after the read of the link
+ * @param {function} callback method to execute after the read of the link, take pth and text in params
  */
 function getPathToLink(callback) {
   var pth = "uploadImages";
@@ -161,7 +165,11 @@ function getPathToLink(callback) {
             if(err) throw err;
             pth += '/' + images;
             console.log(pth);
-            callback(pth);
+            jsonfile.readFile("text.json", function(err, obj) {
+              if(err) throw err;
+              callback(pth, obj.text);
+            });
+            
           });
         } else {
           return;

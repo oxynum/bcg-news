@@ -21,8 +21,11 @@ app.get('/', function(req, res) {
 app.get('/display', function(req, res) {
   var imageName = {value: mailController.pathToImage};
 
-  mailController.pathToImage(function(path) {
-    res.render('display', { imageName: path.replace('uploadImages/', '') });
+  mailController.pathToImage(function(path, txt) {
+    res.render('display', {
+       imageName: path.replace('uploadImages/', ''),
+       text: txt
+      });
   });
 });
 
