@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Nord SUD NEWS</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  </head>
+  <body class="text-center container jumbotron" style="background-color:rgb(30,30,30)">
+    <div class="container-fluid" style="background-color:rgb(245,245,245); border-radius:10px;">
+      <h1>Launch your news</h1>
+      <h4>Uploadez une Image en .JPEG</h4>
+      <hr>
+      <form class="" action="/sendMail" method="post" enctype="multipart/form-data"> <br>
+        <input type="file" id="imagetoUpload" name="imageContent" class="btn btn-default form-control" required="true"/> <br>
+        <textarea class="form-control" name="name" rows="8" cols="80" name="text" required="true" placeholder="Indiquez le texte à envoyer par mail"></textarea> <br>
+        <input type="submit" name="button" class="btn btn-primary" value="Send Mail & SMS">
+      </form>
+      <hr>
+    </div>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  </body>
+</html>
