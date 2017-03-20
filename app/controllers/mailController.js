@@ -144,7 +144,8 @@ function launchMailRoutine(informations) {
 }
 
 /**
- * 
+ * Get path to link for image
+ * @param {function} callback method to execute after the read of the link
  */
 function getPathToLink(callback) {
   var pth = "uploadImages";
