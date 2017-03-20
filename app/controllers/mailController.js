@@ -1,5 +1,5 @@
 var Mailjet      = require ('node-mailjet')
-  .connect("b66aeb1489a86390a6ff914f915e423f", "3a414a588dd751e931bcdf3162d3b636"),
+  .connect("2d4b4c79bcede8af4a8037b72576c578", "bc41e577e597ae3e0a28331d014c9064"),
     messagebird  = require('messagebird')('igX4NnV7kaK3HQoRYElNq6cxk'),
     csv          = require('fast-csv'),
     path         = require('path'),
@@ -124,7 +124,7 @@ function executeSendingSMS(pathOfImage) {
           'recipients': [
             smsReceiver[0]
           ],
-          'body': 'Bonjour, voici notre nouveau produit, cliquez ici pour y avoir accès: http://dev.bcgschool.com:9001/display' //+ pathToLink.replace("uploadImages/","")
+          'body': 'Bonjour, voici notre nouveau produit, cliquez ici pour y avoir accès: https://goo.gl/h4zbYK'
         };
         messagebird.messages.create(params, function (err, response) {
          if (err) {
