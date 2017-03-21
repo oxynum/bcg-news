@@ -1,6 +1,6 @@
 var Mailjet      = require ('node-mailjet')
   .connect("2d4b4c79bcede8af4a8037b72576c578", "bc41e577e597ae3e0a28331d014c9064"),
-    messagebird  = require('messagebird')('igX4NnV7kaK3HQoRYElNq6cxk'),
+    messagebird  = require('messagebird')('k5U3TrQXK4g20rGhCRIXjE8Fo'),
     csv          = require('fast-csv'),
     path         = require('path'),
     fs           = require('fs'),
@@ -35,9 +35,8 @@ function readMailList(text, imageContent, callback) {
 function sendMails(text, imageContent, callback) {
 
   var sendEmail    = Mailjet.post('send');
-  encodeImage(imageContent, callback);
-
-  mailList.forEach(function(receiver) {
+  encodeImage(imageContent, callback, function(){
+      mailList.forEach(function(receiver) {
     var emailData = {
         'FromEmail': 'hello@acbbvolley.fr',
         'FromName': 'Nord Sud Textiles',
@@ -50,7 +49,6 @@ function sendMails(text, imageContent, callback) {
           "Content": encodedImage.toString()
         }],
     };
-
     sendEmail
       .request(emailData)
         .then(function() {
@@ -60,21 +58,25 @@ function sendMails(text, imageContent, callback) {
           console.log("Error when sending mail", e);
         });
       });
+  });
 }
 
 /**
 * Will encode the image downloaded in base64.
 * @param {string} path represents the path of the temp directory where the image is located
 */
-function encodeImage(path, callback) {
+function encodeImage(path, callback1, callback2) {
   var  fileupload = require('fileupload').createFileUpload('./uploadImages');
   fileupload.put(path, function(err, file) {
    if(err) throw err;
    console.log("File successfuly uploaded.", file);
-   callback(file);
+   var bitmap = fs.readFile(path, function(err, filePath){
+     if(err) throw err;
+    encodedImage =  new Buffer(filePath).toString('base64');
+    callback2();
+    callback1(file);
+   });
  });
- var bitmap = fs.readFileSync(path);
- encodedImage =  new Buffer(bitmap).toString('base64');
 }
 
 
@@ -85,33 +87,16 @@ function encodeImage(path, callback) {
  * @param {Object} fileObject the object that contains everything about the file info.
  */
 function prepareSMS(fileObject) {
-  fs.readdir(pathToLink, function(err, files) {
-    if(err) throw err;
-    files.forEach(function(file) {
-      var tmp = path.resolve(pathToLink, file);
-      fs.stat(tmp, function(err2, stat) {
-        if(err2) throw err2;
-        if(stat.isDirectory()) {
-          pathToLink += '/' + file;
-          fs.readdir(pathToLink, function(err, images) {
-            if(err) throw err;
-            pathToLink += '/' + images;
-            console.log(pathToLink);
-            executeSendingSMS(pathToLink);
-          });
-        } else {
-          return;
-        }
-      });
-    });
-  });
+  console.log("Preparing the SMS...", fileObject);
+  executeSendingSMS();
 }
 
 /**
  * 
  * @param {*} pathOfImage 
  */
-function executeSendingSMS(pathOfImage) {
+function executeSendingSMS() {
+  console.log('Execute SMS sending.');
   csv
    .fromPath("smsContacts.csv")
     .on("data", function(data) {
@@ -120,7 +105,7 @@ function executeSendingSMS(pathOfImage) {
     .on("end", function() {
       smsList.forEach(function(smsReceiver) {
         var params = {
-          'originator': 'MessageBird',
+          'originator': 'NORDSUDTEXT',
           'recipients': [
             smsReceiver[0]
           ],
@@ -169,7 +154,6 @@ function getPathToLink(callback) {
               if(err) throw err;
               callback(pth, obj.text);
             });
-            
           });
         } else {
           return;

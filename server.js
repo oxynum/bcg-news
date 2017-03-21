@@ -4,6 +4,8 @@ var express            = require('express'),
     colors             = require('colors'),
     multipart          = require('connect-multiparty')(),
     rimraf             = require('rimraf'),
+    fs                 = require('fs'),
+    path               = require('path'),
     mailController     = require('./app/controllers/mailController');
 
 app.set('view engine', 'ejs');
@@ -12,10 +14,28 @@ app.use(express.static(__dirname + '/uploadImages'));
 // DEFINE ROUTES : '/'
 app.get('/', function(req, res) {
   //REMOVE Uploadfolder
-  rimraf('uploadImages', function() {
-     console.log('Removing Folder: Done');
-   });
-  res.render('index');
+  var pth = "uploadImages";
+  fs.readdir(pth, function(err, files) {
+    if(err) throw err;
+    if(files.length == 0) {
+      res.render('index');
+      return;
+    }
+    files.forEach(function(file) {
+      var tmp = path.resolve(pth, file);
+      console.log(tmp);
+      fs.stat(tmp, function(err2, stat) {
+        if(err2) throw err2;
+        if(stat.isDirectory()) {
+          pth += '/' + file;
+          rimraf(pth, function() {
+            console.log('Removing Folder: Done');
+            res.render('index');
+          });
+        }
+      });
+    });
+  });
 });
 
 app.get('/display', function(req, res) {
